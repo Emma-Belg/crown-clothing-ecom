@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
-import {ReactComponent as Logo} from '../assets/4.3_crown.svg';
+import {ReactComponent as Logo} from '../../assets/4.3_crown.svg';
 import './header.styles.scss';
 
 const Header = () => (
@@ -12,7 +12,7 @@ const Header = () => (
             </Link>
             <div className="options">
                 <Link className="option" to="/shop">SHOP</Link>
-{/*                <Link className="option" to="">CONTACT</Link>*/}
+                <Link className="option" to="">CONTACT</Link>
             </div>
 
     </div>
