@@ -7,3 +7,8 @@ a {
     text-decoration: none;
     color: black;
 }
+
+* {
+    /*This makes the box sizing on all elements on the page expand to include their padding*/
+    box-sizing: border-box;
+}
