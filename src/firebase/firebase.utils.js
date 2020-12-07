@@ -17,9 +17,36 @@ firebase.initializeApp(config);
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 
+export const createUserProfileDocument = async (userAuth, additionalData) => {
+    if (!userAuth) return;
+
+    const userRef = firestore.doc(`users/${userAuth.uid}`);
+    const snapShot = await userRef.get();
+    console.log("the firestore snapShot", snapShot);
+
+    if (!snapShot.exists) {
+        const {displayName, email} = userAuth;
+        const createdAt = new Date();
+
+        try {
+            await userRef.set({
+                displayName,
+                email,
+                createdAt,
+                ...additionalData
+            });
+            console.log("A new user was created");
+        } catch (error) {
+            console.log(displayName, email, createdAt);
+            console.log('Error creating user: ', error)
+        }
+    }
+    return userRef;
+};
+
 const provider = new firebase.auth.GoogleAuthProvider();
 //this will trigger the Google pop up whenever we use this Google Auth provider for auth and sign in
-provider.setCustomParameters({ prompt: 'select_account'});
+provider.setCustomParameters({prompt: 'select_account'});
 export const signInWithGoogle = () => auth.signInWithPopup(provider);
 
 export default firebase;
