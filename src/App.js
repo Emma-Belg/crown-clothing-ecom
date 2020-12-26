@@ -1,5 +1,6 @@
 import React from 'react';
 import {Route, Switch} from 'react-router-dom';
+import {connect} from "react-redux";
 
 import './App.css';
 
@@ -8,35 +9,28 @@ import Header from "./components/header/header.component";
 import HomePage from "./pages/homepage/homepage.component";
 import ShopPage from "./pages/shop/shop.component";
 import SignInAndSignUpPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up.component";
+import {setCurrentUser} from "./redux/user/user.actions";
 
 class App extends React.Component {
-    constructor() {
-        super();
-
-        this.state = {
-            currentUser: null
-        }
-    }
-
     unsubscribeFromAuth = null;
 
     componentDidMount() {
+        const {setCurrentUser} = this.props;
+
         //using auth from Firebase library
         this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
             if (userAuth) {
                 const userRef = await createUserProfileDocument(userAuth);
 
                 userRef.onSnapshot(snapshot => {
-                    this.setState({
-                        currentUser: {
-                            id: snapshot.id,
-                            ...snapshot.data()
-                        }
-                    }, () => console.log("state", this.state));
-                }, () => console.log(this.state));
+                    setCurrentUser({
+                        id: snapshot.id,
+                        ...snapshot.data()
+                    })
+                });
             } else {
                 //set current user to Null if user is not signed in
-                this.setState({currentUser: userAuth});
+                setCurrentUser(userAuth);
             }
         });
     }
@@ -45,10 +39,10 @@ class App extends React.Component {
         this.unsubscribeFromAuth();
     }
 
-    render(){
+    render() {
         return (
             <div>
-                <Header currentUser={this.state.currentUser}/>
+                <Header/>
                 <Switch>
                     <Route exact path='/' component={HomePage}/>
                     <Route path='/shop' component={ShopPage}/>
@@ -60,4 +54,11 @@ class App extends React.Component {
 
 }
 
-export default App;
+//function that gets dispatch property and returns an object where the prop name will be
+//be the name of the prop that we want to pass in, that dispatches the new action.
+const mapDispatchToProps = dispatch => ({
+    //dispatch is a way for Redux to know that the object you pass me is an action object that I must pass to every reducer
+    setCurrentUser: user => dispatch(setCurrentUser(user))
+});
+
+export default connect(null, mapDispatchToProps)(App);

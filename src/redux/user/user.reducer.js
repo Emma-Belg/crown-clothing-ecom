@@ -12,6 +12,7 @@ const userReducer = (state = INITIAL_STATE, action) => {
         case 'SET_CURRENT_USER' :
             return {
                 ...state,
+                //this is the value that needs to be passed into the app (in this case, our header.component)
                 currentUser: action.payload
             }
 
